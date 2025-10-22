@@ -4,6 +4,7 @@ dir="$HOME/.config/polybar"
 themes=(`ls --hide="launch.sh" $dir`)
 
 launch_bar() {
+	monitors=$(polybar --list-monitors | cut -d":" -f1)
 	# Terminate already running bar instances
 	killall -q polybar
 
@@ -17,7 +18,9 @@ launch_bar() {
 	elif [[ "$style" == "pwidgets" ]]; then
 		bash "$dir"/pwidgets/launch.sh --main
 	else
-		polybar -q main -c "$dir/$style/config.ini" &	
+		for monitor in $monitors; do
+		MONITOR=$monitor polybar -q main -c "$dir/$style/config.ini" &
+		done
 	fi
 }
 
